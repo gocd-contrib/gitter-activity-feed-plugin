@@ -14,4 +14,4 @@
  * limitations under the License.
  */
 
-rootProject.name = 'gitter-notification-plugin'
+rootProject.name = 'gitter-activity-feed-plugin'

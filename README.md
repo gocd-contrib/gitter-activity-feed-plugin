@@ -1,20 +1,25 @@
-# Notification plugin skeleton
+# GoCD plugin for Gitter Activity Feed
+    
+    GoCD plugin to send build status notification as a part gitter activity feed.
+     
+# Installation
+    
+    Copy gitter-activity-feed-plugin.x.x.x-SNAPSHOT.jar to plugin folder
 
-This is merely a skeleton plugin that plugin developers can fork to get quickly
-started with writing notification plugins for GoCD.
+# GoCD webhook URL
+    
+   1. Go to your gitter room, where you want to receive activity feed from GoCD server
+   2. Click on "Room settings" and select "Integrations"
+   3. Select GoCD from integration list
+   4. Update your prefrences for activity feed notification
+   5. Note the webhook url and click in done
 
-## Getting started
+# Configuration
 
-* Edit the file `build.gradle`
-* Edit the `GetPluginConfigurationExecutor.java` class to add any configuration fields that should be shown in the view.
-* Edit the `plugin-settings.template.html` file which contains the view for the plugin settings page of your plugin.
-* Edit the `PluginSettings.java` file which contains the model for your settings.
-* Implement the `StageStatusRequestExecutor.java` class to get a basic notification plugin working.
-
-## Building the code base
-
-To build the jar, run `./gradlew clean test assemble`
-
+   1. Open plugin setting from **Admin** --> **Plugin**
+   2. Specify GoCD server url (e.g. http://<your server name>:8153)
+   3. Specify Gitter webhook url for GoCD
+    
 ## License
 
 ```plain

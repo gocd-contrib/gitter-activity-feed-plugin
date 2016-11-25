@@ -74,7 +74,7 @@ public class StageStatusRequestExecutor implements RequestExecutor {
                 request.pipeline.stage.counter);
 
         String trackbackURL = String.format("%s/go/pipelines/%s", settings.getGoServerUrl(), stageLocator);
-        String status = getStatus(request.pipeline.stage.result);
+        String status = getStatus(request.pipeline.stage.result).toLowerCase();
 
         JsonObject jsonObject = new JsonObject();
         StringBuilder messageBuilder = new StringBuilder();
@@ -83,7 +83,7 @@ public class StageStatusRequestExecutor implements RequestExecutor {
         messageBuilder.append(" ").append(status).append(".");
 
         jsonObject.addProperty("message", messageBuilder.toString());
-        jsonObject.addProperty("status", status.toLowerCase());
+        jsonObject.addProperty("status", status);
 
         String payloadJSON = jsonObject.toString();
         postContent(connection, payloadJSON);
