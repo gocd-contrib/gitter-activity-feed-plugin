@@ -14,4 +14,11 @@
  * limitations under the License.
  */
 
-rootProject.name = 'gitter-notification-plugin'
+package cd.go.contrib.activityfeed.gitter;
+
+import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
+
+public interface RequestExecutor {
+
+    GoPluginApiResponse execute() throws Exception;
+}

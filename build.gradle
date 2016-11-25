@@ -16,18 +16,18 @@
 
 apply plugin: 'java'
 
-group = 'com.example.notification.template'
-version = '0.1-SNAPSHOT'
+group = 'cd.go.contrib'
+version = '0.0.1-SNAPSHOT'
 
 // these values that go into plugin.xml
 project.ext.pluginDesc = [
-    id         : 'com.example.notification.systemout',
+    id         : 'cd.go.contrib.activityfeed.gitter',
     version    : project.version,
-    goCdVersion: '16.2.1',
-    name       : 'Example Notification Plugin that prints to `System.out`',
-    description: 'Some longer description of your plugin goes here',
-    vendorName : 'Acme Corp',
-    vendorUrl  : 'https://github.com/user/repository'
+    goCdVersion: '16.8.0',
+    name       : 'Gitter activity feed plugin',
+    description: 'Gitter activity feed plugin for GoCD.',
+    vendorName : 'GoCD Contributors',
+    vendorUrl  : 'https://github.com/gocd-contrib/gitter-notification-feed-plugin'
 ]
 
 // Force 1.7 compatibility to ensure that it works with older JVMs
