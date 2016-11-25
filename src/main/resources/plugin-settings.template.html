@@ -17,7 +17,7 @@
 <!--
 This page contains the view for your settings.
 Ensure that the keys you use are also declared in the GetPluginConfigurationExecutor class
-TODO: change this to your needs
+
 -->
 <div class="form_item_block">
   <label>Go Server URL:<span class='asterix'>*</span></label>
@@ -26,7 +26,7 @@ TODO: change this to your needs
 </div>
 
 <div class="form_item_block">
-  <label>Gitter webhook URL:<span class='asterix'>*</span></label>
+  <label>Gitter webhook URL<a href="https://github.com/gocd-contrib/gitter-activity-feed-plugin#gocd-webhook-url" target="_blank">(Help)</a>:<span class='asterix'>*</span></label>
   <input type="text" ng-model="gitter_webhook_url" ng-required="true"/>
   <span class="form_error" ng-show="GOINPUTNAME[gitter_webhook_url].$error.server">{{GOINPUTNAME[gitter_webhook_url].$error.server}}</span>
 </div>
