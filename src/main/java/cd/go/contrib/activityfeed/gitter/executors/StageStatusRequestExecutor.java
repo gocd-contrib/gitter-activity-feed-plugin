@@ -36,6 +36,7 @@ import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 public class StageStatusRequestExecutor implements RequestExecutor {
     private static final Gson GSON = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
@@ -82,6 +83,10 @@ public class StageStatusRequestExecutor implements RequestExecutor {
         messageBuilder.append("(").append(trackbackURL).append(")");
         messageBuilder.append(" ").append(status).append(".");
 
+        for (StageStatusRequest.BuildCause buildCause : request.pipeline.buildCause) {
+            messageBuilder.append("\n").append(getMaterialInfo(buildCause));
+        }
+
         jsonObject.addProperty("message", messageBuilder.toString());
         jsonObject.addProperty("status", status);
 
@@ -93,6 +98,31 @@ public class StageStatusRequestExecutor implements RequestExecutor {
 
         GitterNotificationFeedPlugin.LOG.info("Notification status(" + responseCode + "): " + response.toString());
 
+    }
+
+    private String getMaterialInfo(StageStatusRequest.BuildCause buildCause) {
+        StringBuilder builder = new StringBuilder();
+        if ("git".equalsIgnoreCase((String) buildCause.material.get("type"))) {
+            Map gitConfig = (Map) buildCause.material.get("git-configuration");
+            String url = toHttps((String) gitConfig.get("url"));
+            for (StageStatusRequest.Modification modification : buildCause.modifications) {
+                builder.append(url).append(modification.revision).append("\n");
+            }
+        }
+        return builder.toString();
+    }
+
+    private String toHttps(String url) {
+        if (url.startsWith("https://")) {
+            return url + "/commit/";
+        }
+        return new StringBuilder()
+                .append("https://")
+                .append(url.substring(url.indexOf("@") + 1, url.indexOf(":")))
+                .append("/")
+                .append(url.substring(url.indexOf(":") + 1, url.indexOf("/")))
+                .append(url.substring(url.indexOf("/"), url.indexOf(".git")))
+                .append("/commit/").toString();
     }
 
     private String getResponse(HttpsURLConnection connection) throws IOException {
