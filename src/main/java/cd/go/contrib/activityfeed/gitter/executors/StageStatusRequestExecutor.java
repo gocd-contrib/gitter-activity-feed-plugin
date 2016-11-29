@@ -36,6 +36,9 @@ import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
+
+import static cd.go.contrib.activityfeed.gitter.utils.Util.isGitHubRepository;
 
 public class StageStatusRequestExecutor implements RequestExecutor {
     private static final Gson GSON = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
@@ -63,36 +66,75 @@ public class StageStatusRequestExecutor implements RequestExecutor {
     }
 
     protected void sendNotification() throws Exception {
-
         PluginSettings settings = pluginRequest.getPluginSettings();
         HttpsURLConnection connection = getHttpsURLConnection(settings.getGitterWebhookUrl());
 
-        String stageLocator = String.format("%s/%s/%s/%s",
-                request.pipeline.name,
-                request.pipeline.counter,
-                request.pipeline.stage.name,
-                request.pipeline.stage.counter);
-
-        String trackbackURL = String.format("%s/go/pipelines/%s", settings.getGoServerUrl(), stageLocator);
         String status = getStatus(request.pipeline.stage.result).toLowerCase();
+        String message = buildMessage(settings, status);
 
-        JsonObject jsonObject = new JsonObject();
-        StringBuilder messageBuilder = new StringBuilder();
-        messageBuilder.append("[").append(stageLocator).append("]");
-        messageBuilder.append("(").append(trackbackURL).append(")");
-        messageBuilder.append(" ").append(status).append(".");
+        JsonObject payloadJSON = new JsonObject();
+        payloadJSON.addProperty("message", message);
+        payloadJSON.addProperty("status", status);
 
-        jsonObject.addProperty("message", messageBuilder.toString());
-        jsonObject.addProperty("status", status);
-
-        String payloadJSON = jsonObject.toString();
-        postContent(connection, payloadJSON);
+        postContent(connection, payloadJSON.toString());
 
         int responseCode = connection.getResponseCode();
         String response = getResponse(connection);
 
         GitterNotificationFeedPlugin.LOG.info("Notification status(" + responseCode + "): " + response.toString());
 
+    }
+
+    private String buildMessage(PluginSettings settings, String status) {
+        StringBuilder messageBuilder = new StringBuilder();
+
+        String stageLocator = String.format("%s/%s/%s/%s",
+                request.pipeline.name,
+                request.pipeline.counter,
+                request.pipeline.stage.name,
+                request.pipeline.stage.counter);
+        String trackbackURL = String.format("%s/go/pipelines/%s", settings.getGoServerUrl(), stageLocator);
+
+        messageBuilder.append("[").append(stageLocator).append("]")
+                .append("(").append(trackbackURL).append(")")
+                .append(" ").append(status).append(".").append("\n");
+
+        for (StageStatusRequest.BuildCause buildCause : request.pipeline.buildCause) {
+            messageBuilder.append(getMaterialInfo(buildCause));
+        }
+        return messageBuilder.toString();
+    }
+
+    private String getMaterialInfo(StageStatusRequest.BuildCause buildCause) {
+        StringBuilder builder = new StringBuilder();
+        if ("git".equalsIgnoreCase((String) buildCause.material.get("type"))) {
+            Map gitConfig = (Map) buildCause.material.get("git-configuration");
+            String url = (String) gitConfig.get("url");
+
+            if (url != null && isGitHubRepository(url)) {
+                for (StageStatusRequest.Modification modification : buildCause.modifications) {
+                    builder.append(getGitHubHttpsURL(url))
+                            .append("/commit/")
+                            .append(modification.revision)
+                            .append("\n");
+                }
+            }
+        }
+        return builder.toString();
+    }
+
+    private String getGitHubHttpsURL(String url) {
+        if (url.startsWith("https://")) {
+            return url.substring(0, url.indexOf(".git"));
+        }
+
+        return new StringBuilder()
+                .append("https://")
+                .append(url.substring(url.indexOf("@") + 1, url.indexOf(":")))
+                .append("/")
+                .append(url.substring(url.indexOf(":") + 1, url.indexOf("/")))
+                .append(url.substring(url.indexOf("/"), url.indexOf(".git")))
+                .toString();
     }
 
     private String getResponse(HttpsURLConnection connection) throws IOException {

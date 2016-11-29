@@ -44,4 +44,8 @@ public class Util {
             throw new RuntimeException(e);
         }
     }
+
+    public static boolean isGitHubRepository(String url) {
+        return url.toLowerCase().startsWith("git@github.com:") || url.toLowerCase().startsWith("https://github.com/");
+    }
 }
