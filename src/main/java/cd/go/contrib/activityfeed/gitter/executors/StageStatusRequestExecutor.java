@@ -97,7 +97,7 @@ public class StageStatusRequestExecutor implements RequestExecutor {
 
         messageBuilder.append("[").append(stageLocator).append("]")
                 .append("(").append(trackbackURL).append(")")
-                .append(" ").append(status).append(".").append("\n");
+                .append(" ").append(status).append(".");
 
         for (StageStatusRequest.BuildCause buildCause : request.pipeline.buildCause) {
             messageBuilder.append(getMaterialInfo(buildCause));
@@ -115,8 +115,7 @@ public class StageStatusRequestExecutor implements RequestExecutor {
                 for (StageStatusRequest.Modification modification : buildCause.modifications) {
                     builder.append(getGitHubHttpsURL(url))
                             .append("/commit/")
-                            .append(modification.revision)
-                            .append("\n");
+                            .append(modification.revision);
                 }
             }
         }
