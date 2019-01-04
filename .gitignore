@@ -1,8 +1,10 @@
 # Intellij files
-.idea/
+.idea/*
+!.idea/copyright
 
 # gradle's output dir
 build/
+out/
 
 # the gradle temp dir
 .gradle
