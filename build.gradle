@@ -23,7 +23,7 @@ apply from: 'plugin-helpers.gradle'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-project.ext.pluginVersion = '0.0.4'
+project.ext.pluginVersion = '0.1.0'
 project.ext.fullVersion = project.git.distVersion() ? "${project.pluginVersion}-${project.git.distVersion()}" : project.pluginVersion
 
 group = 'cd.go.contrib'
@@ -34,7 +34,7 @@ project.ext.pluginDesc = [
         id         : 'cd.go.contrib.activityfeed.gitter',
         repo       : rootProject.name,
         version    : project.version,
-        goCdVersion: '16.8.0',
+        goCdVersion: '20.9.0',
         name       : 'Gitter activity feed plugin',
         description: 'Gitter activity feed plugin for GoCD.',
         vendorName : 'GoCD Contributors',
